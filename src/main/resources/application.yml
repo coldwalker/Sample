@@ -1,0 +1,25 @@
+server:
+  port: 80
+spring:
+  datasource:
+    url: jdbc:h2:~/im
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 123456
+    schema: classpath:db/schema.sql
+    data: classpath:db/data.sql
+
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+
+  jpa:
+    database: h2
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  redis:
+    host: localhost
+    port: 6379

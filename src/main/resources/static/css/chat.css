@@ -1,0 +1,156 @@
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.2);
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: lightskyblue !important;
+}
+
+.unread {
+  font-size: 1em;
+  color: red;
+}
+
+.chat-thread {
+  width: 100%;
+  margin: 2px auto 0 auto;
+  padding: 0 2px 0 0;
+  list-style: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.chat-thread li {
+  position: relative;
+  clear: both;
+  display: inline-block;
+  padding: 10px 20px 10px 10px;
+  margin: 0 0 20px 0;
+  border-radius: 10px;
+  background-color: rgba(25, 147, 147, 0.2);
+}
+
+/* Chat - Avatar */
+.chat-thread li:before {
+  position: absolute;
+  top: 0;
+  width: 45px;
+  height: 45px;
+  border-radius: 45px;
+  content: '';
+}
+
+/* Chat - Speech Bubble Arrow */
+.chat-thread li:after {
+  position: absolute;
+  top: 15px;
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 15px solid rgba(25, 147, 147, 0.2);
+}
+
+/*.chat-thread li:nth-child(odd) {
+  float: right;
+  margin-right: 80px;
+  color: #0AD5C1;
+}
+
+.chat-thread li:nth-child(odd):before {
+  right: -70px;
+  background-size: 45px 45px;
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat:no-repeat;
+  background-image: url(/images/lisi.png);
+}
+
+.chat-thread li:nth-child(odd):after {
+  border-right: 15px solid transparent;
+  right: -15px;
+}*/
+
+#self-chat-li {
+  float: right;
+  margin-right: 80px;
+  color: #0AD5C1;
+}
+#self-chat-li:before {
+  right: -70px;
+  background-size: 45px 45px;
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat:no-repeat;
+}
+
+#self-chat-li:after {
+  border-right: 15px solid transparent;
+  right: -15px;
+}
+
+/*.chat-thread li:nth-child(even) {
+  float: left;
+  margin-left: 80px;
+  color: #0EC879;
+}
+
+.chat-thread li:nth-child(even):before {
+  left: -70px;
+  background-size: 45px 45px;
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat:no-repeat;
+  background-image: url(/images/zhangsan.png);
+}
+.chat-thread li:nth-child(even):after {
+  border-left: 15px solid transparent;
+  left: -15px;
+}*/
+
+#other-chat-li {
+  float: left;
+  margin-left: 80px;
+  color: #0EC879;
+}
+
+#other-chat-li:before {
+  left: -70px;
+  background-size: 45px 45px;
+  background-position-x: center;
+  background-position-y: center;
+  background-repeat:no-repeat;
+  background-image: url("/images/lisi.png");
+  /*background-image: "url";*/
+}
+
+#other-chat-li:after {
+  border-left: 15px solid transparent;
+  left: -15px;
+}
+
+
+/* Small screens */
+@media all and (max-width: 767px) {
+  .chat-thread {
+    height: 260px;
+  }
+
+}
+/* Medium and large screens */
+@media all and (min-width: 768px) {
+  .chat-thread {
+    height: 320px;
+  }
+}
+
+
