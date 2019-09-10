@@ -9,15 +9,13 @@
 ## 界面
 界面上主要分成4个，一个登录界面，一个所有联系人界面，一个最近联系人界面，一个聊天页。分别如下（请原谅界面的丑陋，前端对我实在比较费劲）：
 
-![](media/15681324607417/15681328098567.jpg)￼
+![](https://github.com/coldwalker/resources/blob/master/geektime/login.jpg)￼
 
-![](media/15681324607417/15681327771427.jpg)￼
+![](https://github.com/coldwalker/resources/blob/master/geektime/all_contacts.jpg)￼
 
+![](https://github.com/coldwalker/resources/blob/master/geektime/latest_contacts.jpg)￼
 
-
-![](media/15681324607417/15681327640636.jpg)￼
-
-![](media/15681324607417/15681326513678.jpg)￼
+![](https://github.com/coldwalker/resources/blob/master/geektime/chat.jpg)￼
 
 ## 框架
 框架上后端用到了spring boot + JPA，前端主要是bootstrap和thymeleaf结合。
