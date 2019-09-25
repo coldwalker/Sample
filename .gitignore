@@ -1,0 +1,31 @@
+#maven
+target/
+captcha/*.png
+*.zip
+
+work/
+
+#eclipse ignore
+.settings/
+.project
+.classpath
+bin/
+
+#idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+out/
+
+#temp ignore
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+*.swp
+logs
+test-output
+.recommenders
+.DS_Store
