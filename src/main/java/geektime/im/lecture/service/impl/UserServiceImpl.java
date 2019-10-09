@@ -62,8 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsersExcept(User exceptUser) {
-        List<User> otherUsers = userRepository.findAll();
-        otherUsers.remove(exceptUser);
+        List<User> otherUsers = userRepository.findUsersByUidIsNot(exceptUser.getUid());
         return otherUsers;
     }
 

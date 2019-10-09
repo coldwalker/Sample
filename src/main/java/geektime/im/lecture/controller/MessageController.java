@@ -27,7 +27,7 @@ public class MessageController {
     @PostMapping(path = "/sendMsg")
     @ResponseBody
     public String sendMsg(@RequestParam Long senderUid, @RequestParam Long recipientUid, String content, Integer msgType, Model model, HttpSession session) {
-        MessageContent messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
+        MessageVO messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
         if (null != messageContent) {
             return JSONObject.toJSONString(messageContent);
         } else {

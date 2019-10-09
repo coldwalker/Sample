@@ -7,7 +7,7 @@
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/chat.css}" rel="stylesheet" type="text/css"/>
     <script type="text/javascript" th:src="@{/js/jquery-3.1.1.min.js}"></script>
-    <script type="text/javascript" th:src="@{/js/chat.js}"></script>
+    <script type="text/javascript" th:src="@{/js/ws_chat.js}"></script>
     <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
     <style>
 
@@ -21,8 +21,7 @@
     <thead>
     <th><h2>IM实战：搭建一个简易聊天系统</h2></th>
     <th>
-        <div align="right"><a href="/logout">登出</a></div>
-        <div align="right"><a href="/ws">websocket</a></div>
+        <div align="right"><label id="ws_status"></label><a href="/logout">登出</a></div>
     </th>
     </thead>
 </table>
@@ -41,7 +40,8 @@
                 <th>操作</th>
                 </thead>
                 <tbody id="contactsBody" class="w-100">
-                <tr th:unless="${contactVO} == null" th:each=" contactInfo : ${contactVO.contactInfoList}">
+                <tr th:unless="${contactVO} == null" th:each=" contactInfo : ${contactVO.contactInfoList}"
+                    th:attr="chat_uid=${contactInfo.otherUid}">
                     <td><img width="50px" th:src="@{'/images/'+${contactInfo.otherAvatar}}"/></td>
                     <td th:text="${contactInfo.otherName}"></td>
                     <td th:text="${contactInfo.content}"></td>
@@ -117,14 +117,15 @@
 
 <script type="text/javascript">
     /*<![CDATA[*/
-    var newMsgLoop;
+    var websocket;
+    $(document).ready(function () {
+        init();
+    });
+
     $('#chatModal').on('show.bs.modal', function (event) {
         queryMsg(event);
     })
 
-    $('#chatModal').on('hide.bs.modal', function (event) {
-        window.clearInterval(newMsgLoop);
-    })
 
     $("#message-text").keydown(function (event) {
         if (event.keyCode == "13") {
@@ -136,7 +137,7 @@
         sendMsg(event);
     });
 
-    setInterval(queryContactsAndUnread, 3000);
+    setInterval(queryUnread, 3000);
 
     /*]]>*/
 </script>

@@ -1,5 +1,6 @@
 package geektime.im.lecture.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import geektime.im.lecture.Constants;
 import geektime.im.lecture.dao.MessageContactRepository;
@@ -32,7 +33,7 @@ public class MessageServiceImpl implements MessageService {
     private RedisTemplate redisTemplate;
 
     @Override
-    public MessageContent sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
+    public MessageVO sendNewMsg(long senderUid, long recipientUid, String content, int msgType) {
         Date currentTime = new Date();
         /**存内容*/
         MessageContent messageContent = new MessageContent();
@@ -94,7 +95,13 @@ public class MessageServiceImpl implements MessageService {
         redisTemplate.opsForValue().increment(recipientUid + "_T", 1); //加总未读
         redisTemplate.opsForHash().increment(recipientUid + "_C", senderUid, 1); //加会话未读
 
-        return messageContent;
+        /** 待推送消息发布到redis */
+        User self = userRepository.findOne(senderUid);
+        User other = userRepository.findOne(recipientUid);
+        MessageVO messageVO = new MessageVO(mid, content, self.getUid(), messageContactSender.getType(), other.getUid(), messageContent.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
+        redisTemplate.convertAndSend(Constants.WEBSOCKET_MSG_TOPIC, JSONObject.toJSONString(messageVO));
+
+        return messageVO;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class MessageServiceImpl implements MessageService {
                 MessageContent contentVO = contentRepository.findOne(mid);
                 if (null != contentVO) {
                     String content = contentVO.getContent();
-                    MessageVO messageVO = new MessageVO(mid, content, relation.getOwnerUid(), relation.getType(), relation.getOtherUid(), relation.getCreateTime(), self.getAvatar(), other.getAvatar());
+                    MessageVO messageVO = new MessageVO(mid, content, relation.getOwnerUid(), relation.getType(), relation.getOtherUid(), relation.getCreateTime(), self.getAvatar(), other.getAvatar(), self.getUsername(), other.getUsername());
                     msgList.add(messageVO);
                 }
             });
@@ -171,5 +178,15 @@ public class MessageServiceImpl implements MessageService {
             return contactVO;
         }
         return null;
+    }
+
+    @Override
+    public long queryTotalUnread(long ownerUid) {
+        long totalUnread = 0;
+        Object totalUnreadObj = redisTemplate.opsForValue().get(ownerUid + Constants.TOTAL_UNREAD_SUFFIX);
+        if (null != totalUnreadObj) {
+            totalUnread = Long.parseLong((String) totalUnreadObj);
+        }
+        return totalUnread;
     }
 }

@@ -18,7 +18,7 @@ public interface MessageService {
      * @param msgType
      * @return
      */
-    MessageContent sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
+    MessageVO sendNewMsg(long senderUid, long recipientUid, String content, int msgType);
 
     /**
      * 查两人的历史消息
@@ -43,4 +43,11 @@ public interface MessageService {
      * @return
      */
     MessageContactVO queryContacts(long ownerUid);
+
+    /**
+     * 查询某人总未读
+     * @param ownerUid
+     * @return
+     */
+    long queryTotalUnread(long ownerUid);
 }

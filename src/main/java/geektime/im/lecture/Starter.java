@@ -7,7 +7,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"geektime.im.lecture"})
 @ServletComponentScan(basePackages = {"geektime.im.lecture.controller"})
 public class Starter extends SpringBootServletInitializer {
 

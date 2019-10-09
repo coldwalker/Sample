@@ -62,6 +62,18 @@ public class UserController {
         }
     }
 
+    @RequestMapping(path = "/ws")
+    public String ws(Model model, HttpSession session) {
+        User loginUser = (User)session.getAttribute(Constants.SESSION_KEY);
+        model.addAttribute("loginUser", loginUser);
+        List<User> otherUsers = userService.getAllUsersExcept(loginUser);
+        model.addAttribute("otherUsers", otherUsers);
+
+        MessageContactVO contactVO = userService.getContacts(loginUser);
+        model.addAttribute("contactVO", contactVO);
+        return "index_ws";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         // 移除session
