@@ -174,7 +174,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
      * @param msgJson
      */
     private void checkAndResend(Channel channel, JSONObject msgJson) {
-        long tid = 1;
+        long tid = msgJson.getLong("tid");
         int tryTimes = 2;//重推2次
         while (tryTimes > 0) {
             if (nonAcked.containsKey(tid) && tryTimes > 0) {
