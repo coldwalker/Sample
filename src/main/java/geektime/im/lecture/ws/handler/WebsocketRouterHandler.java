@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -33,10 +32,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final ConcurrentHashMap<Long, Channel> userChannel = new ConcurrentHashMap<>(15000);
     private static final ConcurrentHashMap<Channel, Long> channelUser = new ConcurrentHashMap<>(15000);
-    private Map<Long, JSONObject> nonAcked = new ConcurrentHashMap<>();
     private ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(50, new EnhancedThreadFactory("ackCheckingThreadPool"));
     private static final Logger logger = LoggerFactory.getLogger(WebsocketRouterHandler.class);
     private static final AttributeKey<AtomicLong> TID_GENERATOR = AttributeKey.valueOf("tid_generator");
+    private static final AttributeKey<ConcurrentHashMap> NON_ACKED_MAP = AttributeKey.valueOf("non_acked_map");
 
     @Autowired
     private MessageService messageService;
@@ -60,6 +59,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
                     userChannel.put(loginUid, ctx.channel());
                     channelUser.put(ctx.channel(), loginUid);
                     ctx.channel().attr(TID_GENERATOR).set(new AtomicLong(0));
+                    ctx.channel().attr(NON_ACKED_MAP).set(new ConcurrentHashMap<Long, JSONObject>());
                     logger.info("[user bind]: uid = {} , channel = {}", loginUid, ctx.channel());
                     ctx.writeAndFlush(new TextWebSocketFrame("{\"type\":1,\"status\":\"success\"}"));
                     break;
@@ -81,7 +81,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
                     long senderUid = data.getLong("senderUid");
                     long recipientUid = data.getLong("recipientUid");
                     String content = data.getString("content");
-                    int msgType = data.getIntValue("msgType");
+                    int msgType     = data.getIntValue("msgType");
                     MessageVO messageContent = messageService.sendNewMsg(senderUid, recipientUid, content, msgType);
                     if (messageContent != null) {
                         JSONObject jsonObject = new JSONObject();
@@ -99,7 +99,8 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
 
                 case 6: //处理ack
                     long tid = data.getLong("tid");
-                    nonAcked.remove(tid);
+                    ConcurrentHashMap<Long, JSONObject> nonAckedMap = ctx.channel().attr(NON_ACKED_MAP).get();
+                    nonAckedMap.remove(tid);
                     break;
             }
 
@@ -159,7 +160,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
      * @param msgJson
      */
     public void addMsgToAckBuffer(Channel channel, JSONObject msgJson) {
-        nonAcked.put(msgJson.getLong("tid"), msgJson);
+        channel.attr(NON_ACKED_MAP).get().put(msgJson.getLong("tid"), msgJson);
         executorService.schedule(() -> {
             if (channel.isActive()) {
                 checkAndResend(channel, msgJson);
@@ -177,7 +178,7 @@ public class WebsocketRouterHandler extends SimpleChannelInboundHandler<WebSocke
         long tid = msgJson.getLong("tid");
         int tryTimes = 2;//重推2次
         while (tryTimes > 0) {
-            if (nonAcked.containsKey(tid) && tryTimes > 0) {
+            if (channel.attr(NON_ACKED_MAP).get().containsKey(tid) && tryTimes > 0) {
                 channel.writeAndFlush(new TextWebSocketFrame(msgJson.toJSONString()));
                 try {
                     Thread.sleep(2000);
