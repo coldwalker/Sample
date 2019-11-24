@@ -13,12 +13,14 @@ public class EmbededRedis {
 
     @Value("${spring.redis.port}")
     private int redisPort;
+    @Value("${spring.redis.maxheap}")
+    private String maxheap;
 
     private RedisServer redisServer;
 
     @PostConstruct
     public void startRedis() throws IOException {
-        redisServer = new RedisServer(redisPort);
+        redisServer = RedisServer.builder().setting("maxheap "+maxheap).port(redisPort).setting("bind localhost").build();
         redisServer.start();
     }
 
