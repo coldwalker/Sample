@@ -66,25 +66,33 @@ var onmsg = function (event) {
 };
 
 function reconnect() {
-    websocket = new WebSocket("ws://127.0.0.1:8080");
-    $("#ws_status").text("重新上线");
-    websocket.onmessage = function (event) {
-        onmsg(event);
-    };
+    var isReconnect = false;
+    setTimeout(function () {
+        websocket = new WebSocket("ws://127.0.0.1:8080");
+        $("#ws_status").text("重新上线");
+        websocket.onmessage = function (event) {
+            onmsg(event);
+        };
 
-    websocket.onopen = function () {
-        bind();
-        heartBeat.start();
-    }
+        websocket.onopen = function () {
+            bind();
+            heartBeat.start();
+        }
 
-    websocket.onclose = function () {
-        reconnect();
-    };
+        websocket.onclose = function () {
+            if (!isReconnect) {
+                reconnect();
+                isReconnect = true;
+            }
+        };
 
-    websocket.onerror = function () {
-        reconnect();
-    };
-
+        websocket.onerror = function () {
+            if (!isReconnect) {
+                reconnect();
+                isReconnect = true;
+            }
+        };
+    }, 5000);
 }
 
 function sendMsg(event) {
