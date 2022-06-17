@@ -16,7 +16,7 @@
 
         <netty.version>4.1.39.Final</netty.version>
         <springboot.version>1.5.22.RELEASE</springboot.version>
-        <fastjson.version>1.2.59</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <guava.version>28.1-jre</guava.version>
         <h2.version>1.4.199</h2.version>
         <embededRedis.version>0.7.2</embededRedis.version>
